@@ -3,9 +3,12 @@ export const colors = {
         primary: '#4F46E5',
         onPrimary: '#FFF',
 
-        background: '#FFFFFF',
-        surface: '#F9FAFB', // used for cards, inputs, modals
+        background: '#F9FAFB',
+        surface: '#FFFFFF', // used for cards, inputs, modals
         border: '#E5E7EB',
+
+        disabled: '#E5E7EB',
+        onDisabled: '#9CA3AF',
 
         text: {
             normal: '#111827',
@@ -22,9 +25,12 @@ export const colors = {
         primary: '#6366F1',
         onPrimary: '#FFF',
 
-        background: '#0F172A',
-        surface: '#1E293B', // used for cards, inputs, modals
+        background: '#1E293B',
+        surface: '#0F172A', // used for cards, inputs, modals
         border: '#334155',
+
+        disabled: '#1E293B',
+        onDisabled: '#4B5563',
 
         text: {
             normal: '#F8FAFC',

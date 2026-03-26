@@ -11,7 +11,7 @@ import Animated, {
 import { Screen, Spacer } from '@/components'
 
 // constants
-import { colors, radius, spacing, typography } from '@/constants'
+import { colors, radius, size, spacing, typography } from '@/constants'
 
 // icons
 import AppIcon from '../assets/icon.svg'
@@ -47,8 +47,8 @@ const Index = () => {
                 {/* App Icon */}
                 <View style={styles.iconContainer}>
                     <AppIcon
-                        width={spacing.xxl}
-                        height={spacing.xxl}
+                        width={size.iconXl}
+                        height={size.iconXl}
                         color={colors.light.primary}
                     />
                 </View>

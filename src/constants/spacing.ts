@@ -9,10 +9,6 @@ export const spacing = {
     // default page spacing
     pageHorizontal: 24,
     pageVertical: 16,
-}
 
-export const size = {
-    iconSm: 16,
-    iconMd: 24,
-    iconLg: 32,
+    inputVertical: 20,
 }

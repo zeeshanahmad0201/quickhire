@@ -2,8 +2,9 @@ import { Text, StyleSheet } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { Screen, Spacer, Input, Button, Error } from '@/components'
+import { Screen, Spacer, Input, Button, Error, TextButton } from '@/components'
 import { colors, spacing, typography } from '@/constants'
+import { router } from 'expo-router'
 
 type LoginForm = {
     email: string
@@ -20,7 +21,10 @@ const Login = () => {
     const onSubmit = (data: LoginForm) => console.log(data)
     return (
         <Screen main>
-            <KeyboardAwareScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+            <KeyboardAwareScrollView
+                contentContainerStyle={styles.container}
+                showsVerticalScrollIndicator={false}
+            >
                 {/* Header */}
                 <Text style={styles.title}>Welcome Back</Text>
                 <Spacer height={spacing.sm} />
@@ -67,15 +71,31 @@ const Login = () => {
                                 value={value}
                                 onChangeText={onChange}
                             />
+
                             {errors.password && <Error title={errors.password.message} />}
                         </>
                     )}
+                />
+
+                <TextButton
+                    title="Forgot password?"
+                    onPress={() => {}}
+                    style={styles.forgotPasswordContainer}
+                    titleStyle={styles.forgotPasswordText}
                 />
 
                 <Spacer height={spacing.xxl} />
 
                 {/* Button */}
                 <Button title="Login" onPress={handleSubmit(onSubmit)} />
+
+                {/* Register */}
+                <TextButton
+                    title="Register"
+                    prefix="Don't have an account?"
+                    onPress={() => router.push('/register')}
+                    style={styles.register}
+                />
             </KeyboardAwareScrollView>
         </Screen>
     )
@@ -85,7 +105,6 @@ export default Login
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'flex-start',
         justifyContent: 'center',
         flex: 1,
     },
@@ -95,5 +114,14 @@ const styles = StyleSheet.create({
     subtitle: {
         ...typography.bodyMd,
         color: colors.light.text.subtle,
+    },
+    forgotPasswordContainer: {
+        alignSelf: 'flex-end',
+    },
+    forgotPasswordText: {
+        color: colors.light.primary,
+    },
+    register: {
+        alignSelf: 'center',
     },
 })

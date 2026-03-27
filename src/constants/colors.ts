@@ -20,6 +20,12 @@ export const colors = {
         error: '#EF4444',
         success: '#22C55E',
         warning: '#F59E0B',
+
+        icon: {
+            normal: '#6B7280',
+            muted: '#9CA3AF',
+            active: '#4F46E5',
+        },
     },
     dark: {
         primary: '#6366F1',
@@ -42,5 +48,11 @@ export const colors = {
         error: '#F87171',
         success: '#4ADE80',
         warning: '#FCD34D',
+
+        icon: {
+            normal: '#94A3B8',
+            muted: '#64748B',
+            active: '#6366F1',
+        },
     },
 }

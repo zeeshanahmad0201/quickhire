@@ -15,6 +15,11 @@ const inputPresets = {
         autoCapitalize: 'none',
         placeholder: 'Password',
     },
+    name: {
+        keyboardType: 'name',
+        autoCapitalize: 'words',
+        placeholder: 'Full name',
+    },
 }
 
 type InputPreset = keyof typeof inputPresets
@@ -39,7 +44,11 @@ export const Input = ({ preset, ...props }: InputProps) => {
             <TextInput style={styles.input} {...presetProps} {...props} />
             {preset === 'password' && (
                 <TouchableOpacity style={styles.suffix} onPress={toggleVisibility}>
-                    {isVisible ? <EyeOff /> : <Eye />}
+                    {isVisible ? (
+                        <EyeOff color={colors.light.icon.normal} />
+                    ) : (
+                        <Eye color={colors.light.icon.normal} />
+                    )}
                 </TouchableOpacity>
             )}
         </View>
@@ -48,7 +57,6 @@ export const Input = ({ preset, ...props }: InputProps) => {
 
 const styles = StyleSheet.create({
     container: {
-        ...shadows.light.md,
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: radius.width,

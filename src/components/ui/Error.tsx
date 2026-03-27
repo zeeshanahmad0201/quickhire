@@ -14,8 +14,6 @@ type ErrorProps = {
     banner?: boolean
 }
 export const Error = ({ title, banner = false }: ErrorProps) => {
-    if (!title) return
-
     const opacity = useSharedValue(0)
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -25,6 +23,8 @@ export const Error = ({ title, banner = false }: ErrorProps) => {
     useEffect(() => {
         opacity.value = withSpring(1, { duration: 600 })
     }, [])
+
+    if (!title) return null
 
     if (banner) {
         return (

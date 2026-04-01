@@ -5,6 +5,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Button, Error, Input, Screen, Spacer, TextButton } from '@/components'
 import { colors, spacing, typography } from '@/constants'
 import { router } from 'expo-router'
+import { useAuth } from '@/hooks'
+import { useEffect } from 'react'
+import Toast from 'react-native-toast-message'
 
 type RegisterForm = {
     name: string
@@ -22,8 +25,28 @@ const Register = () => {
     } = useForm<RegisterForm>()
 
     const password = watch('password')
+    const { register, loading, error } = useAuth()
 
-    const onSubmit = (data: RegisterForm) => console.log(data)
+    useEffect(() => {
+        if (!loading && error) {
+            Toast.show({
+                type: 'error',
+                text1: error,
+                position: 'bottom',
+            })
+        }
+    }, [loading])
+
+    const onSubmit = async (data: RegisterForm) => {
+        await register({
+            name: data.name,
+            email: data.email,
+            password: data.password,
+        })
+
+        // do NOT navigate here
+        // onAuthStateChange fires → store updates → layout redirect handles it
+    }
 
     return (
         <Screen main>
@@ -147,7 +170,12 @@ const Register = () => {
                 <Spacer height={spacing.lg} />
 
                 {/* Button */}
-                <Button title="Register" onPress={handleSubmit(onSubmit)} />
+                <Button
+                    title="Register"
+                    onPress={handleSubmit(onSubmit)}
+                    disabled={loading}
+                    loading={loading}
+                />
 
                 <TextButton
                     title="Login"

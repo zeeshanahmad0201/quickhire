@@ -1,6 +1,13 @@
-import { Stack } from 'expo-router'
+import { useUserStore } from '@/stores'
+import { Redirect, Stack } from 'expo-router'
 
 const AuthLayout = () => {
+    const { user, authChecked } = useUserStore()
+
+    if (!authChecked) return null
+
+    if (user) return <Redirect href="/(app)/home" />
+
     return (
         <Stack>
             <Stack.Screen name="login" options={{ headerShown: false }} />

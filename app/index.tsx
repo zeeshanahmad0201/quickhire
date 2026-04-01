@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, ActivityIndicator } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import Animated, {
     useAnimatedStyle,
@@ -6,35 +6,46 @@ import Animated, {
     withDelay,
     withTiming,
 } from 'react-native-reanimated'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useEffect, useState } from 'react'
+import { Redirect } from 'expo-router'
 
-// components
-import { Screen, Spacer } from '@/components'
-
-// constants
+import { Spacer } from '@/components'
 import { colors, radius, size, spacing, typography } from '@/constants'
+import { useUserStore } from '@/stores'
+import { usePrefs } from '@/hooks'
 
 // icons
 import AppIcon from '../assets/icon.svg'
-import { LinearGradient } from 'expo-linear-gradient'
-import { useEffect } from 'react'
-import { router } from 'expo-router'
 
 const Index = () => {
     const opacity = useSharedValue(0)
 
     useEffect(() => {
         opacity.value = withDelay(200, withTiming(1, { duration: 800 }))
-
-        const timer = setTimeout(() => {
-            router.replace('/login')
-        }, 1500) // 2 seconds
-
-        return () => clearTimeout(timer)
     }, [opacity])
 
     const animatedStyle = useAnimatedStyle(() => ({
         opacity: opacity.value,
     }))
+
+    const [minTimeElapsed, setMinTimeElapsed] = useState(false)
+
+    useEffect(() => {
+        const timer = setTimeout(() => setMinTimeElapsed(true), 1500)
+        return () => clearTimeout(timer)
+    }, [])
+
+    const { user, authChecked } = useUserStore()
+    const { hasOnboarded } = usePrefs()
+
+    if (minTimeElapsed) {
+        if (!hasOnboarded) {
+            return <Redirect href={'/(onboarding)/'} />
+        } else if (authChecked) {
+            return <Redirect href={user ? '/(app)/home' : '/(auth)/login'} />
+        }
+    }
 
     return (
         <LinearGradient
@@ -63,6 +74,8 @@ const Index = () => {
                 {/* Subtitle */}
                 <Text style={styles.subtitle}>Local services at your fingertips</Text>
             </Animated.View>
+
+            <ActivityIndicator style={styles.loader} color={colors.light.onPrimary} />
         </LinearGradient>
     )
 }
@@ -76,7 +89,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     content: {
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     iconContainer: {
         backgroundColor: colors.light.onPrimary,
@@ -94,5 +109,8 @@ const styles = StyleSheet.create({
         ...typography.bodyMd,
         color: colors.light.onPrimary,
         textAlign: 'center',
+    },
+    loader: {
+        marginBottom: spacing.md,
     },
 })

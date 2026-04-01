@@ -5,6 +5,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Screen, Spacer, Input, Button, Error, TextButton } from '@/components'
 import { colors, spacing, typography } from '@/constants'
 import { router } from 'expo-router'
+import { useAuth } from '@/hooks'
+import { useEffect } from 'react'
+import Toast from 'react-native-toast-message'
 
 type LoginForm = {
     email: string
@@ -16,9 +19,39 @@ const Login = () => {
         control,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm<LoginForm>()
 
-    const onSubmit = (data: LoginForm) => console.log(data)
+    const email = watch('email')
+
+    const { login, error, loading, forgotPassword } = useAuth()
+
+    useEffect(() => {
+        if (!loading && error) {
+            Toast.show({
+                type: 'error',
+                text1: error,
+                position: 'bottom',
+            })
+        }
+    }, [loading])
+
+    const onSubmit = async (data: LoginForm) => {
+        await login(data)
+        // do NOT navigate here
+        // onAuthStateChange fires → store updates → layout redirect handles it
+    }
+
+    const onResetPassword = async () => {
+        if (!email) return
+        await forgotPassword(email)
+        Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: `Password reset link has been sent to ${email} with instructions`,
+            position: 'bottom',
+        })
+    }
     return (
         <Screen main>
             <KeyboardAwareScrollView
@@ -77,17 +110,23 @@ const Login = () => {
                     )}
                 />
 
-                <TextButton
+                {/* TODO: implement forgot password */}
+                {/* <TextButton
                     title="Forgot password?"
-                    onPress={() => {}}
+                    onPress={onResetPassword}
                     style={styles.forgotPasswordContainer}
                     titleStyle={styles.forgotPasswordText}
-                />
+                /> */}
 
                 <Spacer height={spacing.xxl} />
 
                 {/* Button */}
-                <Button title="Login" onPress={handleSubmit(onSubmit)} />
+                <Button
+                    title="Login"
+                    onPress={handleSubmit(onSubmit)}
+                    disabled={loading}
+                    loading={loading}
+                />
 
                 {/* Register */}
                 <TextButton

@@ -1,4 +1,4 @@
-import { spacing, typography } from '@/constants'
+import { spacing, typography, colors } from '@/constants'
 import { Text, TouchableOpacity, StyleSheet, TouchableOpacityProps, TextStyle } from 'react-native'
 
 type TextButtonProps = TouchableOpacityProps & {
@@ -32,10 +32,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        ...typography.labelMd,
+        ...typography.labelLg,
+        color: colors.light.primary,
     },
     prefix: {
-        ...typography.bodySm,
+        ...typography.bodyMd,
         marginRight: spacing.xs,
     },
 })

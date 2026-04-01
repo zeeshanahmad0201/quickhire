@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "quickhire",
+    "name": "Quickhire",
     "slug": "quickhire",
     "scheme": "quickhire",
     "version": "1.0.0",
@@ -8,7 +8,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#4F46E5"
     },
@@ -25,7 +24,8 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.xeeshanahmad.quickhire"
     },
     "web": {
       "favicon": "./assets/favicon.png"

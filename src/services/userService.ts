@@ -2,25 +2,25 @@ import { User } from '@supabase/supabase-js'
 
 import { tables } from '@/constants'
 import { database } from '@/lib'
-import { AppUser } from '@/types'
+import { AppUser, UserRole } from '@/types'
 
 export const userService = {
-    currentUser: async (): Promise<User | null> => {
+    currentUser: async (): Promise<User> => {
         try {
             const {
                 data: { user },
             } = await database.auth.getUser()
-            return user
+            return user!
         } catch (error) {
             console.error('Unable to fetch current user', error)
-            return null
+            throw new Error('No user is logged in!')
         }
     },
 
     fetchProfile: async (): Promise<AppUser> => {
         try {
             const currentUser = await userService.currentUser()
-            if (!currentUser) throw new Error('No user is logged in!')
+
             const { data, error } = await database
                 .from(tables.users)
                 .select('*')
@@ -45,6 +45,21 @@ export const userService = {
             }
         } catch (error) {
             console.log('Unable to fetch user profile', error)
+            throw error
+        }
+    },
+
+    setRole: async (role: UserRole, userId: string) => {
+        try {
+            const { error } = await database
+                .from(tables.users)
+                .update({
+                    role: role,
+                })
+                .eq('id', userId)
+            if (error) throw error
+        } catch (error) {
+            console.error('userService: setRole ', error)
             throw error
         }
     },

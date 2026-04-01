@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { authService, userService } from '@/services'
 import { mapAuthError, mapUserError } from '@/utils'
 import { useUserStore } from '@/stores'
+import { UserRole } from '@/types'
 
 export const useUser = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -36,5 +37,23 @@ export const useUser = () => {
         }
     }
 
-    return { loading, error, user, fetchProfile, logout }
+    const updateRole = async (role: UserRole): Promise<boolean> => {
+        try {
+            if (!user) return false
+
+            setLoading(true)
+            setError(null)
+
+            await userService.setRole(role, user.id)
+            setUser({ ...user, role })
+            return true
+        } catch (error) {
+            setError(mapUserError(error, 'Operation failed. Please try again'))
+            return false
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { loading, error, user, fetchProfile, logout, updateRole }
 }

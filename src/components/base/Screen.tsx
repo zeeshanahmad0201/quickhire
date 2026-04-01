@@ -1,4 +1,4 @@
-import { ViewProps, View, StyleSheet } from 'react-native'
+import { ViewProps, View, StyleSheet, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 // constants
@@ -10,12 +10,21 @@ type ScreenProps = ViewProps & {
 }
 
 export const Screen = ({ main = false, centeredContent = false, style, ...props }: ScreenProps) => {
-    const combinedStyle = [styles.container, centeredContent && styles.centered, style]
     if (main) {
-        return <SafeAreaView style={[styles.main, combinedStyle]} {...props} />
+        return (
+            <SafeAreaView style={[styles.main, style]}>
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.scrollContent,
+                        centeredContent && styles.centered,
+                    ]}
+                    {...props}
+                />
+            </SafeAreaView>
+        )
     }
 
-    return <View style={combinedStyle} {...props} />
+    return <View style={[styles.container, centeredContent && styles.centered, style]} {...props} />
 }
 
 const styles = StyleSheet.create({
@@ -29,5 +38,9 @@ const styles = StyleSheet.create({
     centered: {
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    scrollContent: {
+        flexGrow: 1,
+        paddingBottom: spacing.pageVertical,
     },
 })

@@ -6,8 +6,7 @@ type UserStore = {
     authChecked: boolean
 
     setUser: (user: AppUser) => void
-    setAuthChecked: (authChecked: boolean) => void
-    clearUser: () => void
+    setAuthState: (user: AppUser | null, authChecked: boolean) => void
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -15,6 +14,5 @@ export const useUserStore = create<UserStore>((set) => ({
     authChecked: false,
 
     setUser: (user) => set({ user }),
-    setAuthChecked: (authChecked) => set({ authChecked }),
-    clearUser: () => set({ user: null }),
+    setAuthState: (user: AppUser | null, authChecked: boolean) => set({ user, authChecked }),
 }))

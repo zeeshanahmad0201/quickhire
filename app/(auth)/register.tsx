@@ -180,7 +180,7 @@ const Register = () => {
                 <TextButton
                     title="Login"
                     prefix="Already have an account?"
-                    onPress={() => router.dismiss()}
+                    onPress={() => router.replace('/login')}
                     style={styles.login}
                 />
             </KeyboardAwareScrollView>

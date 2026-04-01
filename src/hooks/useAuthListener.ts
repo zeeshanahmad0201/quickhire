@@ -3,21 +3,20 @@ import { useUserStore } from '@/stores'
 import { useEffect } from 'react'
 
 export const useAuthListener = () => {
-    const { setUser, clearUser, setAuthChecked } = useUserStore()
+    const { setAuthState } = useUserStore()
 
     useEffect(() => {
         const subscription = authService.onAuthStateChange(async (session) => {
             if (session?.user) {
                 try {
                     const profile = await userService.fetchProfile()
-                    setUser(profile)
+                    setAuthState(profile, true)
                 } catch {
-                    clearUser()
+                    setAuthState(null, true)
                 }
             } else {
-                clearUser()
+                setAuthState(null, true)
             }
-            setAuthChecked(true)
         })
 
         return () => subscription.unsubscribe()

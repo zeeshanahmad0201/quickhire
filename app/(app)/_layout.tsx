@@ -1,9 +1,16 @@
 import { UserOnly } from '@/components'
 import { useUserStore } from '@/stores'
-import { Redirect, Stack } from 'expo-router'
+import { Redirect, router, Stack } from 'expo-router'
+import { useEffect } from 'react'
 
 const AppLayout = () => {
     const { user, authChecked } = useUserStore()
+
+    useEffect(() => {
+        if (user !== null && user!.role === null) {
+            router.replace('/role-select')
+        }
+    }, [user])
 
     if (!authChecked) return null
 
@@ -11,7 +18,9 @@ const AppLayout = () => {
 
     return (
         <UserOnly>
-            <Stack />
+            <Stack>
+                <Stack.Screen name="role-select" options={{ headerShown: false }} />
+            </Stack>
         </UserOnly>
     )
 }

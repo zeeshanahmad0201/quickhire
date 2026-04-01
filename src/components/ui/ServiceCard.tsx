@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { LucideIcon } from 'lucide-react-native'
 
 import { colors, radius, shadows, size, spacing, typography } from '@/constants'
@@ -8,14 +8,32 @@ type ServiceCardProps = {
     icon: LucideIcon
     title: string
     subtitle: string
+    color?: string
+    showBorder?: boolean
+    onPress?: () => void
 }
 
-export const ServiceCard = ({ icon: Icon, title, subtitle }: ServiceCardProps) => {
+export const ServiceCard = ({
+    icon: Icon,
+    title,
+    subtitle,
+    color,
+    showBorder,
+    onPress,
+}: ServiceCardProps) => {
     return (
-        <View style={styles.container}>
+        <TouchableOpacity
+            style={[styles.container, showBorder && [styles.contentBorder, { borderColor: color }]]}
+            onPress={onPress}
+        >
             {/* Icon */}
-            <View style={styles.iconContainer}>
-                <Icon size={size.iconMd} color={colors.light.primary} />
+            <View
+                style={[
+                    styles.iconContainer,
+                    color && { backgroundColor: withOpacity(color, 0.2) },
+                ]}
+            >
+                <Icon size={size.iconMd} color={color ? color : colors.light.primary} />
             </View>
 
             {/* Content */}
@@ -28,7 +46,7 @@ export const ServiceCard = ({ icon: Icon, title, subtitle }: ServiceCardProps) =
                     {subtitle}
                 </Text>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -38,7 +56,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: colors.light.surface,
         borderRadius: radius.sm,
-        borderWidth: 0,
         ...shadows.light.sm,
         padding: spacing.md,
         alignItems: 'center',
@@ -50,6 +67,9 @@ const styles = StyleSheet.create({
         height: size.iconXl,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    contentBorder: {
+        borderWidth: radius.width,
     },
     title: {
         ...typography.titleMd,

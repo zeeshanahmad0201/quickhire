@@ -14,6 +14,7 @@ export const Screen = ({ main = false, centeredContent = false, style, ...props 
         return (
             <SafeAreaView style={[styles.main, style]}>
                 <ScrollView
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={[
                         styles.scrollContent,
                         centeredContent && styles.centered,

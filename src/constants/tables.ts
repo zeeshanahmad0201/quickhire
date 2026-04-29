@@ -6,4 +6,8 @@ export const tables = {
     conversations: 'conversations',
     messages: 'messages',
     notifications: 'notifications',
+
+    buckets: {
+        avatars: 'avatars',
+    },
 }

@@ -7,8 +7,12 @@ const AppLayout = () => {
     const { user, authChecked } = useUserStore()
 
     useEffect(() => {
-        if (user !== null && user!.role === null) {
+        if (!user) return
+
+        if (user.role === null) {
             router.replace('/role-select')
+        } else if (!user.completed) {
+            router.replace(user.role === 'provider' ? '/provider' : '/client')
         }
     }, [user])
 
@@ -20,6 +24,7 @@ const AppLayout = () => {
         <UserOnly>
             <Stack>
                 <Stack.Screen name="role-select" options={{ headerShown: false }} />
+                <Stack.Screen name="(profile-setup)" options={{ headerShown: false }} />
             </Stack>
         </UserOnly>
     )

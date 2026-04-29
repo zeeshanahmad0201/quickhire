@@ -49,7 +49,7 @@ const Index = () => {
 
     return (
         <LinearGradient
-            colors={['#4F46E5', '#7C3AED']}
+            colors={colors.light.gradient.primary}
             style={[StyleSheet.absoluteFill, styles.container]}
         >
             <StatusBar style="light" />

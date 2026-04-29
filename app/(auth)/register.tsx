@@ -8,6 +8,7 @@ import { router } from 'expo-router'
 import { useAuth } from '@/hooks'
 import { useEffect } from 'react'
 import Toast from 'react-native-toast-message'
+import { formRules } from '@/utils'
 
 type RegisterForm = {
     name: string
@@ -65,14 +66,7 @@ const Register = () => {
                 <Controller
                     control={control}
                     name="name"
-                    rules={{
-                        required: 'Full name is required',
-                        validate: (value) => {
-                            if (value.trim().length < 2) return 'Name must be at least 2 characters'
-                            if (!/^[a-zA-Z\s]+$/.test(value)) return 'Name can only contain letters'
-                            return true
-                        },
-                    }}
+                    rules={formRules.name}
                     render={({ field: { onChange, value } }) => (
                         <>
                             <Input
@@ -92,14 +86,7 @@ const Register = () => {
                 <Controller
                     control={control}
                     name="email"
-                    rules={{
-                        required: 'Email is required',
-                        validate: (value) => {
-                            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-                                return 'Enter a valid email'
-                            return true
-                        },
-                    }}
+                    rules={formRules.email}
                     render={({ field: { onChange, value } }) => (
                         <>
                             <Input
@@ -119,15 +106,7 @@ const Register = () => {
                 <Controller
                     control={control}
                     name="password"
-                    rules={{
-                        required: 'Password is required',
-                        validate: {
-                            minLength: (v) => v.length >= 6 || 'At least 6 characters',
-                            hasNumber: (v) => /\d/.test(v) || 'Must contain a number',
-                            hasUppercase: (v) =>
-                                /[A-Z]/.test(v) || 'Must contain an uppercase letter',
-                        },
-                    }}
+                    rules={formRules.password}
                     render={({ field: { onChange, value } }) => (
                         <>
                             <Input

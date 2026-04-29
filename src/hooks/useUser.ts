@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { authService, userService } from '@/services'
 import { mapAuthError, mapUserError } from '@/utils'
 import { useUserStore } from '@/stores'
-import { UserRole } from '@/types'
+import { ProviderProfileForm, UserRole } from '@/types'
 
 export const useUser = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -55,5 +55,23 @@ export const useUser = () => {
         }
     }
 
-    return { loading, error, user, fetchProfile, logout, updateRole }
+    const storeProviderProfile = async (profile: ProviderProfileForm) => {
+        try {
+            if (!user) return
+            setLoading(true)
+            setError(null)
+
+            const stored = await userService.setProviderProfile(profile)
+            if (stored) {
+                const profile = await userService.fetchProfile()
+                setUser(profile)
+            }
+        } catch (error) {
+            setError(mapUserError(error, 'Operation failed. Please try again'))
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { loading, error, user, fetchProfile, logout, updateRole, storeProviderProfile }
 }

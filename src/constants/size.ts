@@ -3,4 +3,5 @@ export const size = {
     iconMd: 24,
     iconLg: 32,
     iconXl: 48,
+    iconXXl: 64,
 }

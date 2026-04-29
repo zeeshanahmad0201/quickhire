@@ -26,6 +26,10 @@ export const colors = {
             muted: '#9CA3AF',
             active: '#4F46E5',
         },
+
+        gradient: {
+            primary: ['#4F46E5', '#7C3AED'] as const,
+        },
     },
     dark: {
         primary: '#6366F1',
@@ -53,6 +57,10 @@ export const colors = {
             normal: '#94A3B8',
             muted: '#64748B',
             active: '#6366F1',
+        },
+        
+        gradient: {
+            primary: ['#4F46E5', '#7C3AED'] as const,
         },
     },
 }

@@ -7,7 +7,7 @@ const ProfileSetupLayout = () => {
 
     useEffect(() => {
         if (user?.completed) {
-            router.replace('/home')
+            router.replace('/(app)/(tabs)/bookings')
         }
     }, [user?.completed])
 

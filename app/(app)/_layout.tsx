@@ -25,6 +25,8 @@ const AppLayout = () => {
             <Stack>
                 <Stack.Screen name="role-select" options={{ headerShown: false }} />
                 <Stack.Screen name="(profile-setup)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
             </Stack>
         </UserOnly>
     )

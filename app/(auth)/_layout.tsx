@@ -6,7 +6,7 @@ const AuthLayout = () => {
 
     if (!authChecked) return null
 
-    if (user) return <Redirect href="/(app)/home" />
+    if (user) return <Redirect href="/(app)/(tabs)/bookings" />
 
     return (
         <Stack>

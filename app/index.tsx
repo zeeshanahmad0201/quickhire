@@ -43,7 +43,7 @@ const Index = () => {
         if (!hasOnboarded) {
             return <Redirect href={'/(onboarding)/'} />
         } else if (authChecked) {
-            return <Redirect href={user ? '/(app)/home' : '/(auth)/login'} />
+            return <Redirect href={user ? '/(app)/(tabs)/bookings' : '/(auth)/login'} />
         }
     }
 

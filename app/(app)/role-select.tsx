@@ -28,7 +28,7 @@ const RoleSelect = () => {
     const onSubmit = async () => {
         if (!role) return
         const success = await updateRole(role)
-        if (success) router.replace('/home')
+        if (success) router.replace('/(app)/(tabs)/bookings')
     }
 
     return (

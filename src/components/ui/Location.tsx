@@ -20,7 +20,7 @@ type LocationProps = {
     onClose: (location: LocationResult) => void
 }
 
-const Location = ({ onClose }: LocationProps) => {
+export const Location = ({ onClose }: LocationProps) => {
     const { loading, gpsLocation, error, requestLocation, location, locationLabel, setLocation } =
         useLocation()
 
@@ -118,8 +118,6 @@ const Location = ({ onClose }: LocationProps) => {
         </>
     )
 }
-
-export default Location
 
 const styles = StyleSheet.create({
     closeBtnContainer: {

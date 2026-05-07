@@ -1,8 +1,11 @@
 import { User } from '@supabase/supabase-js'
+import * as FileSystem from 'expo-file-system/legacy'
+import { decode } from 'base64-arraybuffer'
+import { gql } from 'graphql-request'
 
 import { tables } from '@/constants'
-import { database } from '@/lib'
-import { AppUser, UserRole, ProviderProfileForm } from '@/types'
+import { database, gqlClient } from '@/lib'
+import { AppUser, UserRole, ProviderProfileForm, Service } from '@/types'
 
 export const userService = {
     currentUser: async (): Promise<User> => {
@@ -43,9 +46,10 @@ export const userService = {
                 phone: data.phone,
                 createdAt: data.created_at,
                 completed: data.profile_completed,
+                bio: data.bio,
             }
         } catch (error) {
-            console.log('Unable to fetch user profile', error)
+            console.error('Unable to fetch user profile', error)
             throw error
         }
     },
@@ -65,7 +69,7 @@ export const userService = {
         }
     },
 
-    setProviderProfile: async (profile: ProviderProfileForm): Promise<boolean> => {
+    upsertProviderProfile: async (profile: ProviderProfileForm): Promise<Service> => {
         let uploadedPath: string | null = null
         const avatars = database.storage.from(tables.buckets.avatars)
         try {
@@ -73,45 +77,88 @@ export const userService = {
 
             // upload image
             let profileUrl: string | null = null
-            if (profile.profileUrl) {
-                const response = await fetch(profile.profileUrl)
-                const blob = await response.blob()
-                const ext = blob.type.split('/')[1]
+            if (profile.profileUrl?.startsWith('file://')) {
+                const base64 = await FileSystem.readAsStringAsync(profile.profileUrl, {
+                    encoding: FileSystem.EncodingType.Base64,
+                })
+                const arrayBuffer = decode(base64)
+
+                const ext = profile.profileUrl.split('.').pop()?.toLowerCase() ?? 'jpg'
+                const contentType = ext === 'png' ? 'image/png' : 'image/jpeg'
                 uploadedPath = `${userId}/avatar.${ext}`
 
-                const { error } = await avatars.upload(uploadedPath, blob, {
-                    contentType: blob.type,
-                    upsert: true
+                const { error } = await avatars.upload(uploadedPath, arrayBuffer, {
+                    contentType,
+                    upsert: true,
                 })
                 if (error) throw error
                 const {
                     data: { publicUrl },
                 } = avatars.getPublicUrl(uploadedPath)
                 profileUrl = publicUrl
+            } else if (profile.profileUrl) {
+                profileUrl = profile.profileUrl
             }
 
             // save data to users
-            const { error: updateError } = await database.rpc('setup_provider_profile', {
-                name: profile.name,
-                phone: profile.phone,
-                bio: profile.bio,
-                location: profile.location,
-                avatar_url: profileUrl,
+            const { data, error: updateError } = await database.rpc('upsert_provider_profile', {
+                p_name: profile.name,
+                p_phone: profile.phone,
+                p_bio: profile.bio,
+                p_lat: profile.location.lat,
+                p_lng: profile.location.lng,
+                p_avatar_url: profileUrl,
 
-                user_id: userId,
-                title: profile.title,
-                category: profile.category,
-                description: profile.description,
-                price: parseFloat(profile.price),
-                price_type: profile.pricingType,
+                p_title: profile.title,
+                p_category: profile.category,
+                p_description: profile.description,
+                p_price: parseFloat(profile.price),
+                p_price_type: profile.pricingType,
             })
 
             if (updateError) throw updateError
 
-            return true
+            return data as Service
         } catch (error) {
             if (uploadedPath) await avatars.remove([uploadedPath])
             console.error('userService: setProfile', error)
+            throw error
+        }
+    },
+
+    getMyService: async (): Promise<Service | null> => {
+        try {
+            const userId = (await userService.currentUser()).id
+
+            const query = gql`
+                query MyService($providerId: UUID!) {
+                    servicesCollection(filter: { provider_id: { eq: $providerId } }) {
+                        edges {
+                            node {
+                                id
+                                providerId: provider_id
+                                title
+                                description
+                                category
+                                price
+                                priceType: price_type
+                                lat
+                                lng
+                                images
+                                isActive: is_active
+                                createdAt: created_at
+                            }
+                        }
+                    }
+                }
+            `
+            const data = await gqlClient.request<{
+                servicesCollection: { edges: { node: Service }[] }
+            }>(query, { providerId: userId })
+
+            return data.servicesCollection.edges[0]?.node ?? null
+        } catch (error) {
+            console.error('userService: getMyService', error)
             throw error
         }
     },

@@ -61,7 +61,7 @@ export const useUser = () => {
             setLoading(true)
             setError(null)
 
-            const stored = await userService.setProviderProfile(profile)
+            const stored = await userService.upsertProviderProfile(profile)
             if (stored) {
                 const profile = await userService.fetchProfile()
                 setUser(profile)

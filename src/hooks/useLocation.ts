@@ -74,6 +74,7 @@ export const useLocation = () => {
         requestLocation,
         setGPSLocation,
         reverseGeocode,
-        setLocation
+        setLocation,
+        setLocationLabel
     }
 }

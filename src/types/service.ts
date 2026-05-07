@@ -7,7 +7,7 @@ export type Service = {
     price: number
     images: string[]
     isActive: boolean
-    createdAt: Date
+    createdAt: string
     lat: number
     lng: number
     priceType: PriceType

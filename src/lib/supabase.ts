@@ -5,8 +5,8 @@ import { AppState } from 'react-native'
 export const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
 if (!supabaseUrl) throw new Error('Missing EXPO_PUBLIC_SUPABASE_URL')
 
-export const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-if (!supabaseKey) throw new Error('Missing EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY')
+export const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+if (!supabaseKey) throw new Error('Missing EXPO_PUBLIC_SUPABASE_ANON_KEY')
 
 export const database = createClient(supabaseUrl, supabaseKey, {
     auth: {

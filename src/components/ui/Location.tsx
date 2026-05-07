@@ -12,15 +12,16 @@ import { Button } from '@/components'
 import { Coordinates } from '@/services'
 
 type LocationResult = {
-    location: Coordinates | null, 
+    location: Coordinates | null
     locationLabel: string | null
 }
 
 type LocationProps = {
     onClose: (location: LocationResult) => void
+    initialLocation?: Coordinates
 }
 
-export const Location = ({ onClose }: LocationProps) => {
+export const Location = ({ onClose, initialLocation }: LocationProps) => {
     const { loading, gpsLocation, error, requestLocation, location, locationLabel, setLocation } =
         useLocation()
 
@@ -63,8 +64,8 @@ export const Location = ({ onClose }: LocationProps) => {
                 style={{ flex: 1 }}
                 ref={mapRef}
                 initialRegion={{
-                    latitude: gpsLocation?.lat ?? defaultLocation.lat,
-                    longitude: gpsLocation?.lng ?? defaultLocation.lng,
+                    latitude: initialLocation?.lat ?? gpsLocation?.lat ?? defaultLocation.lat,
+                    longitude: initialLocation?.lng ?? gpsLocation?.lng ?? defaultLocation.lng,
                     latitudeDelta: 0.01,
                     longitudeDelta: 0.01,
                 }}
@@ -77,7 +78,7 @@ export const Location = ({ onClose }: LocationProps) => {
             <SafeAreaView style={styles.closeBtnContainer}>
                 <TouchableOpacity
                     style={styles.closeButton}
-                    onPress={() => onClose({location: location ?? gpsLocation, locationLabel})}
+                    onPress={() => onClose({ location: location ?? gpsLocation, locationLabel })}
                 >
                     <X color={colors.light.onPrimary} size={size.iconMd} />
                 </TouchableOpacity>
@@ -96,7 +97,7 @@ export const Location = ({ onClose }: LocationProps) => {
             <View style={styles.btn}>
                 <Button
                     title="Pick Location"
-                    onPress={() => onClose({location: location ?? gpsLocation, locationLabel})}
+                    onPress={() => onClose({ location: location ?? gpsLocation, locationLabel })}
                 />
             </View>
 

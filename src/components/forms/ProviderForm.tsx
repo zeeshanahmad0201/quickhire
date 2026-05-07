@@ -2,7 +2,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Text, StyleSheet, TouchableOpacity } from 'react-native'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronRight, MapPin } from 'lucide-react-native'
 
 import {
@@ -20,6 +20,7 @@ import {
 import { categories, Category, colors, radius, size, spacing, typography } from '@/constants'
 import { priceTypes, ProviderProfileForm } from '@/types'
 import { formRules } from '@/utils'
+import { useLocation } from '@/hooks'
 
 type ProviderFormProps = {
     initialValues?: Partial<ProviderProfileForm>
@@ -46,9 +47,22 @@ export const ProviderForm = ({
 
     const priceType = watch('pricingType')
     const pickedImage = watch('profileUrl')
+    const location = watch('location')
 
     const [modalVisible, setModalVisible] = useState<boolean>(false)
-    const [locationLabel, setLocationLabel] = useState<string | null>(null)
+    const {
+        locationLabel,
+        setLocationLabel,
+        reverseGeocode,
+        loading: fetchingLocation,
+    } = useLocation()
+
+    useEffect(() => {
+        const location = initialValues?.location
+        if (location?.lat && location.lng) {
+            reverseGeocode({ lat: location.lat, lng: location.lng })
+        }
+    }, [initialValues?.location?.lat, initialValues?.location?.lng])
 
     return (
         <>
@@ -264,7 +278,11 @@ export const ProviderForm = ({
                             <ChevronRight size={size.iconSm} color={colors.light.icon.normal} />
                         </TouchableOpacity>
                     ) : (
-                        <Button title="Select Location" onPress={() => setModalVisible(true)} />
+                        <Button
+                            title="Select Location"
+                            loading={fetchingLocation}
+                            onPress={() => setModalVisible(true)}
+                        />
                     )}
 
                     <Spacer height={spacing.md} />
@@ -283,6 +301,7 @@ export const ProviderForm = ({
             {/* Location popup */}
             <CustomModal visible={modalVisible} onClose={() => setModalVisible(false)} fullScreen>
                 <Location
+                    initialLocation={location}
                     onClose={({ location, locationLabel }) => {
                         if (location) {
                             setValue('location', location)

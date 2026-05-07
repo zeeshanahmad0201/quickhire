@@ -7,7 +7,8 @@ export type AppUser = {
     email: string
     role: UserRole
     avatarUrl?: string
-    location?: string
+    bio?: string
+    location?: { lat: number; lng: number }
     phone?: string
     createdAt: string
     completed: boolean

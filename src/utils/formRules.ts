@@ -59,4 +59,12 @@ export const formRules = {
             format: (v: string) => /^\d+(\.\d{1,2})?$/.test(v) || 'Enter a valid price',
         },
     },
+    companyName: {
+        validate: {
+            minLength: (v?: string) =>
+                !v || v.trim().length >= 2 || 'Company name must be at least 2 characters',
+            maxLength: (v?: string) =>
+                !v || v.trim().length <= 100 || 'Company name must be under 100 characters',
+        },
+    },
 }

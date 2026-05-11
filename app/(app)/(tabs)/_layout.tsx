@@ -1,21 +1,31 @@
 import { router, Tabs } from 'expo-router'
-import { StyleSheet, TouchableOpacity } from 'react-native'
-import { Bell, Calendar, MessageCircle, User } from 'lucide-react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Bell, Calendar, LogOut, MessageCircle, User } from 'lucide-react-native'
 
 import { colors, size, spacing } from '@/constants'
+import { useAuth } from '@/hooks'
 
 const TabsLayout = () => {
+    const { logout } = useAuth()
+
     return (
         <Tabs
             screenOptions={{
                 tabBarActiveTintColor: colors.light.primary,
                 headerRight: () => (
-                    <TouchableOpacity
-                        onPress={() => router.push('/notifications')}
-                        style={styles.bellContainer}
-                    >
-                        <Bell size={size.iconMd} color={colors.light.icon.normal} />
-                    </TouchableOpacity>
+                    <View style={styles.headerActions}>
+                        {/* Notification */}
+                        <TouchableOpacity
+                            onPress={() => router.push('/notifications')}
+                            style={styles.iconButton}
+                        >
+                            <Bell size={size.iconMd} color={colors.light.icon.normal} />
+                        </TouchableOpacity>
+                        {/* Logout */}
+                        <TouchableOpacity onPress={() => logout()}>
+                            <LogOut style={styles.iconButton} color={colors.light.icon.normal} />
+                        </TouchableOpacity>
+                    </View>
                 ),
             }}
         >
@@ -47,8 +57,14 @@ const TabsLayout = () => {
 }
 
 const styles = StyleSheet.create({
-    bellContainer: {
+    headerActions: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        gap: spacing.sm,
         paddingHorizontal: spacing.pageHorizontal,
+    },
+    iconButton: {
+        paddingHorizontal: spacing.sm,
     },
 })
 

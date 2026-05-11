@@ -5,7 +5,7 @@ import { gql } from 'graphql-request'
 
 import { tables } from '@/constants'
 import { database, gqlClient } from '@/lib'
-import { AppUser, UserRole, ProviderProfileForm, Service } from '@/types'
+import { AppUser, UserRole, ProviderProfileForm, Service, ClientProfileForm } from '@/types'
 
 export const userService = {
     currentUser: async (): Promise<User> => {
@@ -47,6 +47,7 @@ export const userService = {
                 createdAt: data.created_at,
                 completed: data.profile_completed,
                 bio: data.bio,
+                companyName: data.company_name,
             }
         } catch (error) {
             console.error('Unable to fetch user profile', error)
@@ -73,32 +74,10 @@ export const userService = {
         let uploadedPath: string | null = null
         const avatars = database.storage.from(tables.buckets.avatars)
         try {
-            const userId = (await userService.currentUser()).id
-
             // upload image
-            let profileUrl: string | null = null
-            if (profile.profileUrl?.startsWith('file://')) {
-                const base64 = await FileSystem.readAsStringAsync(profile.profileUrl, {
-                    encoding: FileSystem.EncodingType.Base64,
-                })
-                const arrayBuffer = decode(base64)
-
-                const ext = profile.profileUrl.split('.').pop()?.toLowerCase() ?? 'jpg'
-                const contentType = ext === 'png' ? 'image/png' : 'image/jpeg'
-                uploadedPath = `${userId}/avatar.${ext}`
-
-                const { error } = await avatars.upload(uploadedPath, arrayBuffer, {
-                    contentType,
-                    upsert: true,
-                })
-                if (error) throw error
-                const {
-                    data: { publicUrl },
-                } = avatars.getPublicUrl(uploadedPath)
-                profileUrl = publicUrl
-            } else if (profile.profileUrl) {
-                profileUrl = profile.profileUrl
-            }
+            const uploaded = await userService.uploadProfileImage(profile.profileUrl)
+            const avatarUrl = uploaded?.url ?? null
+            uploadedPath = uploaded?.storagePath ?? null
 
             // save data to users
             const { data, error: updateError } = await database.rpc('upsert_provider_profile', {
@@ -107,7 +86,7 @@ export const userService = {
                 p_bio: profile.bio,
                 p_lat: profile.location.lat,
                 p_lng: profile.location.lng,
-                p_avatar_url: profileUrl,
+                p_avatar_url: avatarUrl,
 
                 p_title: profile.title,
                 p_category: profile.category,
@@ -159,6 +138,74 @@ export const userService = {
             return data.servicesCollection.edges[0]?.node ?? null
         } catch (error) {
             console.error('userService: getMyService', error)
+            throw error
+        }
+    },
+
+    upsertClientProfile: async (profile: ClientProfileForm): Promise<AppUser> => {
+        let uploadedPath: string | null = null
+        const avatars = database.storage.from(tables.buckets.avatars)
+        try {
+            const uploaded = await userService.uploadProfileImage(profile.profileUrl)
+            const avatarUrl = uploaded?.url ?? null
+            uploadedPath = uploaded?.storagePath ?? null
+
+            const userId = (await userService.currentUser()).id
+
+            const { error } = await database
+                .from(tables.users)
+                .update({
+                    name: profile.name,
+                    phone: profile.phone,
+                    company_name: profile.companyName?.trim() || null,
+                    avatar_url: avatarUrl,
+                    profile_completed: true,
+                })
+                .eq('id', userId)
+
+            if (error) throw error
+
+            const data = await userService.fetchProfile()
+            return data
+        } catch (error) {
+            if (uploadedPath) await avatars.remove([uploadedPath])
+            console.error('userService: upsertClientProfile', error)
+            throw error
+        }
+    },
+
+    uploadProfileImage: async (
+        path?: string
+    ): Promise<{ url: string; storagePath: string | null } | null> => {
+        try {
+            if (!path) return null
+
+            const userId = (await userService.currentUser()).id
+            const avatars = database.storage.from(tables.buckets.avatars)
+
+            if (path?.startsWith('file://')) {
+                const base64 = await FileSystem.readAsStringAsync(path, {
+                    encoding: FileSystem.EncodingType.Base64,
+                })
+                const arrayBuffer = decode(base64)
+
+                const ext = path.split('.').pop()?.toLowerCase() ?? 'jpg'
+                const contentType = ext === 'png' ? 'image/png' : 'image/jpeg'
+                const uploadedPath = `${userId}/avatar.${ext}`
+
+                const { error } = await avatars.upload(uploadedPath, arrayBuffer, {
+                    contentType,
+                    upsert: true,
+                })
+                if (error) throw error
+                const {
+                    data: { publicUrl },
+                } = avatars.getPublicUrl(uploadedPath)
+                return { url: publicUrl, storagePath: uploadedPath }
+            }
+            return { url: path, storagePath: null }
+        } catch (error) {
+            console.log('userService: uploadProfileImage', error)
             throw error
         }
     },

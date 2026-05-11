@@ -11,8 +11,6 @@ const AppLayout = () => {
 
         if (user.role === null) {
             router.replace('/role-select')
-        } else if (!user.completed) {
-            router.replace(user.role === 'provider' ? '/provider' : '/client')
         }
     }, [user])
 
@@ -24,7 +22,6 @@ const AppLayout = () => {
         <UserOnly>
             <Stack>
                 <Stack.Screen name="role-select" options={{ headerShown: false }} />
-                <Stack.Screen name="(profile-setup)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
             </Stack>

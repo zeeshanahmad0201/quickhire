@@ -43,6 +43,11 @@ const inputPresets: Record<string, TextInputProps> = {
         keyboardType: 'decimal-pad',
         placeholder: '0.00',
     },
+    companyName: {
+        autoCapitalize: 'words',
+        autoCorrect: false,
+        placeholder: 'Company name (optional)',
+    },
 }
 
 type InputPreset = keyof typeof inputPresets

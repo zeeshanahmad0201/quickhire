@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { authService } from '@/services'
 import { LoginRequest, RegisterRequest } from '@/types'
 import { mapAuthError } from '@/utils'
+import { queryClient } from '@/lib'
 
 export const useAuth = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -46,6 +47,7 @@ export const useAuth = () => {
             setError(null)
 
             await authService.logout()
+            queryClient.clear()
             return true
         } catch (error) {
             console.error('Failed to logout: ', error)
@@ -76,6 +78,6 @@ export const useAuth = () => {
         login,
         register,
         logout,
-    forgotPassword,
+        forgotPassword,
     }
 }

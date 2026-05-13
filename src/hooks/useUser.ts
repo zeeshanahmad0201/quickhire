@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 import { authService, userService } from '@/services'
-import { mapAuthError, mapUserError } from '@/utils'
 import { useUserStore } from '@/stores'
 import { ProviderProfileForm, UserRole } from '@/types'
+import { errorMessage } from '@/errors'
 
 export const useUser = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -18,7 +18,7 @@ export const useUser = () => {
             const profile = await userService.fetchProfile()
             setUser(profile)
         } catch (error) {
-            setError(mapUserError(error, 'Session expired. Please login again!'))
+            setError(errorMessage(error, 'Session expired. Please login again!'))
         } finally {
             setLoading(false)
         }
@@ -31,7 +31,7 @@ export const useUser = () => {
 
             await authService.logout()
         } catch (error) {
-            setError(mapAuthError(error))
+            setError(errorMessage(error))
         } finally {
             setLoading(false)
         }
@@ -48,7 +48,7 @@ export const useUser = () => {
             setUser({ ...user, role })
             return true
         } catch (error) {
-            setError(mapUserError(error, 'Operation failed. Please try again'))
+            setError(errorMessage(error, 'Operation failed. Please try again'))
             return false
         } finally {
             setLoading(false)
@@ -67,7 +67,7 @@ export const useUser = () => {
                 setUser(profile)
             }
         } catch (error) {
-            setError(mapUserError(error, 'Operation failed. Please try again'))
+            setError(errorMessage(error, 'Operation failed. Please try again'))
         } finally {
             setLoading(false)
         }

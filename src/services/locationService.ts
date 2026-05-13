@@ -1,3 +1,4 @@
+import { translateError } from '@/errors'
 import * as Location from 'expo-location'
 
 export type Coordinates = {
@@ -13,7 +14,7 @@ export const locationService = {
             return status === Location.PermissionStatus.GRANTED
         } catch (error) {
             console.error('locationService: requestPermission', error)
-            throw error
+            throw translateError(error)
         }
     },
 
@@ -29,7 +30,7 @@ export const locationService = {
             }
         } catch (error) {
             console.error('locationService: getCurrentLocation', error)
-            throw error
+            throw translateError(error)
         }
     },
 
@@ -38,8 +39,8 @@ export const locationService = {
             const { status } = await Location.getForegroundPermissionsAsync()
             return status === Location.PermissionStatus.GRANTED
         } catch (error) {
-            console.log('locationService: hasPermission', error)
-            throw error
+            console.error('locationService: hasPermission', error)
+            throw translateError(error)
         }
     },
 
@@ -55,8 +56,8 @@ export const locationService = {
                 .filter(Boolean)
                 .join(', ')
         } catch (error) {
-            console.log('locationService: reverseGeocode', error)
-            throw error
+            console.error('locationService: reverseGeocode', error)
+            throw translateError(error)
         }
     },
 }

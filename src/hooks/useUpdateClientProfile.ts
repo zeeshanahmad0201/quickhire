@@ -1,3 +1,4 @@
+import { errorMessage } from '@/errors'
 import { userService } from '@/services'
 import { useUserStore } from '@/stores'
 import { AppUser, ClientProfileForm } from '@/types'
@@ -21,7 +22,7 @@ export const useUpdateClientProfile = () => {
             Toast.show({
                 type: 'error',
                 text1: 'Update failed',
-                text2: error.message,
+                text2: errorMessage(error),
                 position: 'bottom',
             })
         },

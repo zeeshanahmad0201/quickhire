@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import { authService } from '@/services'
 import { LoginRequest, RegisterRequest } from '@/types'
-import { mapAuthError } from '@/utils'
 import { queryClient } from '@/lib'
+import { errorMessage } from '@/errors'
 
 export const useAuth = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -18,7 +18,7 @@ export const useAuth = () => {
             return true
         } catch (error) {
             console.error('Failed to login: ', error)
-            setError(mapAuthError(error))
+            setError(errorMessage(error))
             return false
         } finally {
             setLoading(false)
@@ -34,7 +34,7 @@ export const useAuth = () => {
             return true
         } catch (error) {
             console.error('Failed to register: ', error)
-            setError(mapAuthError(error))
+            setError(errorMessage(error))
             return false
         } finally {
             setLoading(false)
@@ -51,7 +51,7 @@ export const useAuth = () => {
             return true
         } catch (error) {
             console.error('Failed to logout: ', error)
-            setError(mapAuthError(error))
+            setError(errorMessage(error))
             return false
         } finally {
             setLoading(false)
@@ -65,7 +65,7 @@ export const useAuth = () => {
 
             await authService.forgotPassword(email)
         } catch (error) {
-            setError(mapAuthError(error))
+            setError(errorMessage(error))
         } finally {
             setLoading(false)
         }

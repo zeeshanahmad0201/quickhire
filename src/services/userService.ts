@@ -6,17 +6,26 @@ import { gql } from 'graphql-request'
 import { tables } from '@/constants'
 import { database, gqlClient } from '@/lib'
 import { AppUser, UserRole, ProviderProfileForm, Service, ClientProfileForm } from '@/types'
+import { AuthError, translateError } from '@/errors'
 
 export const userService = {
     currentUser: async (): Promise<User> => {
         try {
             const {
-                data: { user },
-            } = await database.auth.getUser()
-            return user!
+                error,
+                data: { session },
+            } = await database.auth.getSession()
+            if (error) throw error
+            if (!session?.user) {
+                throw new AuthError(
+                    'No user is logged in',
+                    'userService: currentUser returned null user'
+                )
+            }
+            return session.user
         } catch (error) {
-            console.error('Unable to fetch current user', error)
-            throw new Error('No user is logged in!')
+            console.error('userService: currentUser', error)
+            throw new AuthError('No user is logged in', 'userService: currentUser returned no user')
         }
     },
 
@@ -33,7 +42,10 @@ export const userService = {
             if (error) throw error
 
             if (!data) {
-                throw new Error('No user is logged in!')
+                throw new AuthError(
+                    'No user is logged in',
+                    'userService: fetchProfile found no row'
+                )
             }
 
             return {
@@ -50,8 +62,8 @@ export const userService = {
                 companyName: data.company_name,
             }
         } catch (error) {
-            console.error('Unable to fetch user profile', error)
-            throw error
+            console.error('userService: fetchProfile', error)
+            throw translateError(error)
         }
     },
 
@@ -65,8 +77,8 @@ export const userService = {
                 .eq('id', userId)
             if (error) throw error
         } catch (error) {
-            console.error('userService: setRole ', error)
-            throw error
+            console.error('userService: setRole', error)
+            throw translateError(error)
         }
     },
 
@@ -100,45 +112,8 @@ export const userService = {
             return data as Service
         } catch (error) {
             if (uploadedPath) await avatars.remove([uploadedPath])
-            console.error('userService: setProfile', error)
-            throw error
-        }
-    },
-
-    getMyService: async (): Promise<Service | null> => {
-        try {
-            const userId = (await userService.currentUser()).id
-
-            const query = gql`
-                query MyService($providerId: UUID!) {
-                    servicesCollection(filter: { provider_id: { eq: $providerId } }) {
-                        edges {
-                            node {
-                                id
-                                providerId: provider_id
-                                title
-                                description
-                                category
-                                price
-                                priceType: price_type
-                                lat
-                                lng
-                                images
-                                isActive: is_active
-                                createdAt: created_at
-                            }
-                        }
-                    }
-                }
-            `
-            const data = await gqlClient.request<{
-                servicesCollection: { edges: { node: Service }[] }
-            }>(query, { providerId: userId })
-
-            return data.servicesCollection.edges[0]?.node ?? null
-        } catch (error) {
-            console.error('userService: getMyService', error)
-            throw error
+            console.error('userService: upsertProviderProfile', error)
+            throw translateError(error)
         }
     },
 
@@ -170,7 +145,7 @@ export const userService = {
         } catch (error) {
             if (uploadedPath) await avatars.remove([uploadedPath])
             console.error('userService: upsertClientProfile', error)
-            throw error
+            throw translateError(error)
         }
     },
 
@@ -205,8 +180,8 @@ export const userService = {
             }
             return { url: path, storagePath: null }
         } catch (error) {
-            console.log('userService: uploadProfileImage', error)
-            throw error
+            console.error('userService: uploadProfileImage', error)
+            throw translateError(error)
         }
     },
 }

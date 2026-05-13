@@ -1,12 +1,15 @@
 import { router, Tabs } from 'expo-router'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { Bell, Calendar, LogOut, MessageCircle, User } from 'lucide-react-native'
+import { Bell, Calendar, LogOut, MessageCircle, Search, User } from 'lucide-react-native'
 
 import { colors, size, spacing } from '@/constants'
-import { useAuth } from '@/hooks'
+import { useAuth, useUser } from '@/hooks'
 
 const TabsLayout = () => {
     const { logout } = useAuth()
+    const { user } = useUser()
+
+    const isClient = user?.role === 'client'
 
     return (
         <Tabs
@@ -29,6 +32,15 @@ const TabsLayout = () => {
                 ),
             }}
         >
+            <Tabs.Screen
+                name="services"
+                options={{
+                    title: 'Services',
+                    href: isClient ? '/services' : null,
+                    tabBarIcon: ({ color, size }) => <Search size={size} color={color} />,
+                }}
+            />
+
             <Tabs.Screen
                 name="bookings"
                 options={{

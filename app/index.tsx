@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useEffect, useState } from 'react'
-import { Redirect } from 'expo-router'
+import { router } from 'expo-router'
 
 import { Spacer } from '@/components'
 import { colors, radius, size, spacing, typography } from '@/constants'
@@ -36,17 +36,17 @@ const Index = () => {
     }, [])
 
     const { data: user, isPending } = useUser()
-    if (isPending) return null
-
     const { hasOnboarded } = usePrefs()
 
-    if (minTimeElapsed) {
+    useEffect(() => {
+        if (!minTimeElapsed || isPending) return
+
         if (!hasOnboarded) {
-            return <Redirect href={'/(onboarding)/'} />
+            return router.replace('/(onboarding)/')
         }
 
-        return <Redirect href={user ? '/(app)/(tabs)/bookings' : '/(auth)/login'} />
-    }
+        return router.replace(user ? '/(app)/(tabs)/bookings' : '/(auth)/login')
+    }, [minTimeElapsed, isPending, hasOnboarded, user])
 
     return (
         <LinearGradient

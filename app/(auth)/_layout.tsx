@@ -1,12 +1,18 @@
+import { Redirect, router, Stack } from 'expo-router'
 
 import { useUser } from '@/hooks'
-import { Redirect, Stack } from 'expo-router'
+import { useEffect } from 'react'
 
 const AuthLayout = () => {
     const { data: user, isPending } = useUser()
-    if (isPending) return null
 
-    if (user) return <Redirect href="/(app)/(tabs)/bookings" />
+    useEffect(() => {
+        if (user) {
+            return router.replace('/(app)/(tabs)/bookings')
+        }
+    }, [user])
+
+    if (isPending) return null
 
     return (
         <Stack>

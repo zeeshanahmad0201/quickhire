@@ -15,13 +15,13 @@ export const useLocation = () => {
             setError(null)
 
             const hasLocation = await locationService.hasPermission()
-            console.log('hasLocation:', hasLocation)
+            
             if (hasLocation) {
                 const coords = await locationService.getCurrentLocation()
                 setGPSLocation(coords)
             } else {
                 const hasPermission = await locationService.requestPermission()
-                console.log('hasPermission:', hasPermission)
+                
                 if (hasPermission) {
                     const coords = await locationService.getCurrentLocation()
                     setGPSLocation(coords)

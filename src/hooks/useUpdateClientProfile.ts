@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import Toast from 'react-native-toast-message'
 
-import { AuthError, errorMessage } from '@/errors'
+import { errorMessage } from '@/errors'
 import { queryClient } from '@/lib'
 import { userService } from '@/services'
 import { AppUser, ClientProfileForm } from '@/types'

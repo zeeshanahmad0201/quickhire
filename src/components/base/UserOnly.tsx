@@ -5,13 +5,14 @@ import { ViewProps } from 'react-native'
 
 export const UserOnly = ({ children }: ViewProps) => {
     const { data: user, isPending } = useUser()
-    if (isPending) return null
 
     useEffect(() => {
         if (!user) {
             router.replace('/(auth)/login')
         }
     }, [user])
+
+    if (isPending) return null
 
     if (!user) return null
 

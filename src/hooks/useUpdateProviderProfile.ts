@@ -1,4 +1,4 @@
-import { errorMessage } from '@/errors'
+import { AuthError, errorMessage } from '@/errors'
 import { queryClient } from '@/lib'
 import { userService } from '@/services'
 import { ProviderProfileForm, Service } from '@/types'
@@ -15,6 +15,9 @@ export const useUpdateProviderProfile = () => {
 
             // 2. sync user cache
             const freshUser = await userService.fetchProfile()
+            if (!freshUser) {
+                throw new AuthError('No user is logged in', 'profile gone post-upsert')
+            }
             queryClient.setQueryData(['user', 'me'], freshUser)
             Toast.show({
                 type: 'success',

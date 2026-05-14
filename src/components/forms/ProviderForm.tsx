@@ -251,7 +251,7 @@ export const ProviderForm = ({
 
                         <Button
                             title={submitLabel}
-                            onPress={handleSubmit(onSubmit, (data) => console.log('data', data))}
+                            onPress={handleSubmit(onSubmit)}
                             loading={loading}
                             disabled={loading || !isValid}
                         />

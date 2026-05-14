@@ -1,21 +1,22 @@
 import { UserOnly } from '@/components'
 import { useUser } from '@/hooks'
-import { Redirect, router, Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { useEffect } from 'react'
 
 const AppLayout = () => {
     const { data: user, isPending } = useUser()
-    if (isPending) return null
 
     useEffect(() => {
-        if (!user) return
+        if (!user) {
+            return router.replace('/(auth)/login')
+        }
 
         if (user.role === null) {
-            router.replace('/role-select')
+            return router.replace('/role-select')
         }
     }, [user])
 
-    if (!user) return <Redirect href="/(auth)/login" />
+    if (isPending) return null
 
     return (
         <UserOnly>

@@ -20,20 +20,16 @@ export const userService = {
         }
     },
 
-    fetchProfile: async (): Promise<AppUser> => {
+    fetchProfile: async (): Promise<AppUser | null> => {
+        const {
+            data: { session },
+            error: sessionError,
+        } = await database.auth.getSession()
+        if (sessionError) throw translateError(sessionError)
+
+        if (!session?.user) return null
+
         try {
-            const {
-                data: { session },
-                error: sessionError,
-            } = await database.auth.getSession()
-            if (sessionError) throw sessionError
-
-            if (!session?.user)
-                throw new AuthError(
-                    'No user is logged in',
-                    'userService: profile not fetched in fetchProfile'
-                )
-
             const { data, error } = await database
                 .from(tables.users)
                 .select('*')
@@ -140,6 +136,9 @@ export const userService = {
             if (error) throw error
 
             const user = await userService.fetchProfile()
+            if (!user) {
+                throw new AuthError('No user is logged in', 'userService: profile gone post-upsert')
+            }
             return user
         } catch (error) {
             if (uploadedPath) await avatars.remove([uploadedPath])

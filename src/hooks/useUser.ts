@@ -7,5 +7,6 @@ export const useUser = () => {
         queryKey: ['user', 'me'],
         queryFn: () => userService.fetchProfile(),
         staleTime: Infinity,
+        retry: false,
     })
 }

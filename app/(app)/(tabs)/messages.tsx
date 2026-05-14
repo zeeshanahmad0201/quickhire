@@ -4,7 +4,7 @@ import { ProfileGate, Screen } from '@/components'
 import { useUser } from '@/hooks'
 
 const Messages = () => {
-    const { user } = useUser()
+    const { data: user } = useUser()
     if (!user?.completed) return <ProfileGate />
 
     return (

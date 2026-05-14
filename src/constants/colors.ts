@@ -30,6 +30,8 @@ export const colors = {
         gradient: {
             primary: ['#4F46E5', '#7C3AED'] as const,
         },
+
+        overlay: 'rgba(0, 0, 0, 0.3)',
     },
     dark: {
         primary: '#6366F1',
@@ -58,9 +60,11 @@ export const colors = {
             muted: '#64748B',
             active: '#6366F1',
         },
-        
+
         gradient: {
             primary: ['#4F46E5', '#7C3AED'] as const,
         },
+
+        overlay: 'rgba(0, 0, 0, 0.5)',
     },
 }

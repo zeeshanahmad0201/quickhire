@@ -8,7 +8,7 @@ import { translateError } from '@/errors'
 export const serviceService = {
     getMyService: async (): Promise<Service | null> => {
         try {
-            const userId = (await userService.currentUser()).id
+            const userId = userService.currentUser().id
 
             const query = gql`
                 query MyService($providerId: UUID!) {
@@ -79,6 +79,42 @@ export const serviceService = {
             return response.servicesCollection.edges.map((s) => s.node)
         } catch (error) {
             console.error('serviceService: listServices', error)
+            throw translateError(error)
+        }
+    },
+
+    getServiceById: async (id: string): Promise<Service | null> => {
+        try {
+            const query = gql`
+                query GetServiceById($id: UUID!) {
+                    servicesCollection(filter: { id: { eq: $id } }) {
+                        edges {
+                            node {
+                                id
+                                providerId: provider_id
+                                title
+                                description
+                                category
+                                price
+                                priceType: price_type
+                                lat
+                                lng
+                                images
+                                isActive: is_active
+                                createdAt: created_at
+                            }
+                        }
+                    }
+                }
+            `
+
+            const data = await gqlClient.request<{
+                servicesCollection: { edges: { node: Service }[] }
+            }>(query, { id: id })
+
+            return data.servicesCollection.edges[0]?.node ?? null
+        } catch (error) {
+            console.error('serviceService: getServiceById', error)
             throw translateError(error)
         }
     },

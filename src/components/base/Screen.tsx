@@ -1,15 +1,23 @@
-import { ViewProps, View, StyleSheet, ScrollView } from 'react-native'
+import { ViewProps, View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 // constants
-import { spacing, colors } from '@/constants'
+import { spacing, colors, size } from '@/constants'
+import { withOpacity } from '@/utils'
 
 type ScreenProps = ViewProps & {
     main?: boolean
     centeredContent?: boolean
+    loading?: boolean
 }
 
-export const Screen = ({ main = false, centeredContent = false, style, ...props }: ScreenProps) => {
+export const Screen = ({
+    main = false,
+    centeredContent = false,
+    loading = false,
+    style,
+    ...props
+}: ScreenProps) => {
     if (main) {
         return (
             <SafeAreaView style={[styles.main, style]}>
@@ -21,6 +29,12 @@ export const Screen = ({ main = false, centeredContent = false, style, ...props 
                     ]}
                     {...props}
                 />
+
+                {loading && (
+                    <View style={styles.loaderContainer}>
+                        <ActivityIndicator size={size.iconXl} color={colors.light.onPrimary} />
+                    </View>
+                )}
             </SafeAreaView>
         )
     }
@@ -43,5 +57,11 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         paddingBottom: spacing.pageVertical,
+    },
+    loaderContainer: {
+        ...StyleSheet.absoluteFill,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.light.overlay,
     },
 })

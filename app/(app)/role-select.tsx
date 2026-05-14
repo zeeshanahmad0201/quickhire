@@ -1,34 +1,25 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { Briefcase, Search } from 'lucide-react-native'
+import { router } from 'expo-router'
+import { useState } from 'react'
 
 import { Button, Screen, ServiceCard, Spacer } from '@/components'
 import { colors, radius, shadows, spacing, typography } from '@/constants'
 import { withOpacity } from '@/utils'
-import { useEffect, useState } from 'react'
 import { UserRole } from '@/types'
-import { useUser } from '@/hooks'
-import Toast from 'react-native-toast-message'
-import { router } from 'expo-router'
+import { useUpdateRole } from '@/hooks'
 
 const RoleSelect = () => {
     const [role, setRole] = useState<UserRole>()
 
-    const { updateRole, loading, error } = useUser()
-
-    useEffect(() => {
-        if (!loading && error) {
-            Toast.show({
-                type: 'error',
-                text1: error,
-                position: 'bottom',
-            })
-        }
-    }, [loading, error])
+    const { mutateAsync, isPending: loading } = useUpdateRole()
 
     const onSubmit = async () => {
-        if (!role) return
-        const success = await updateRole(role)
-        if (success) router.replace('/(app)/(tabs)/profile')
+        try {
+            if (!role) return
+            await mutateAsync(role)
+            router.replace('/(app)/(tabs)/profile')
+        } catch {} // toast already shown by hook
     }
 
     return (

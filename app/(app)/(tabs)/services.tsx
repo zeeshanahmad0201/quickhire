@@ -5,6 +5,7 @@ import { ActivityIndicator, Text, View } from 'react-native'
 import { Button, Screen, ServiceListItem, Spacer } from '@/components'
 import { spacing } from '@/constants'
 import { errorMessage } from '@/errors'
+import { router } from 'expo-router'
 
 const Services = () => {
     const { isPending, data: services, refetch, isRefetching, isError, error } = useServices()
@@ -32,7 +33,12 @@ const Services = () => {
             <FlashList
                 data={services}
                 keyExtractor={(s) => s.id}
-                renderItem={({ item }) => <ServiceListItem service={item} />}
+                renderItem={({ item }) => (
+                    <ServiceListItem
+                        service={item}
+                        onPress={() => router.push(`/services/${item.id}`)}
+                    />
+                )}
                 ItemSeparatorComponent={() => <Spacer height={spacing.sm} />}
                 onRefresh={refetch}
                 refreshing={isRefetching}

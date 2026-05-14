@@ -1,10 +1,11 @@
 import { UserOnly } from '@/components'
-import { useUserStore } from '@/stores'
+import { useUser } from '@/hooks'
 import { Redirect, router, Stack } from 'expo-router'
 import { useEffect } from 'react'
 
 const AppLayout = () => {
-    const { user, authChecked } = useUserStore()
+    const { data: user, isPending } = useUser()
+    if (isPending) return null
 
     useEffect(() => {
         if (!user) return
@@ -14,8 +15,6 @@ const AppLayout = () => {
         }
     }, [user])
 
-    if (!authChecked) return null
-
     if (!user) return <Redirect href="/(auth)/login" />
 
     return (
@@ -24,6 +23,7 @@ const AppLayout = () => {
                 <Stack.Screen name="role-select" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
+                <Stack.Screen name="services/[id]" options={{ title: 'Service Details' }} />
             </Stack>
         </UserOnly>
     )

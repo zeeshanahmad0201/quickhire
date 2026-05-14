@@ -6,7 +6,7 @@ import { ProviderProfileForm } from '@/types'
 
 
 export const ProviderProfileEditor = () => {
-    const { user } = useUser()
+    const { data: user } = useUser()
     const { data: service, isPending } = useMyService()
     const { mutate, isPending: isSaving } = useUpdateProviderProfile()
 
@@ -21,10 +21,6 @@ export const ProviderProfileEditor = () => {
         description: service?.description ?? '',
         price: service?.price?.toString() ?? '',
         pricingType: service?.priceType ?? 'hourly',
-    }
-
-    if (isPending) {
-        return <ActivityIndicator />
     }
 
     return (

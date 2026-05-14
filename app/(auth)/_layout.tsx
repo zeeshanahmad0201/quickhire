@@ -1,10 +1,10 @@
-import { useUserStore } from '@/stores'
+
+import { useUser } from '@/hooks'
 import { Redirect, Stack } from 'expo-router'
 
 const AuthLayout = () => {
-    const { user, authChecked } = useUserStore()
-
-    if (!authChecked) return null
+    const { data: user, isPending } = useUser()
+    if (isPending) return null
 
     if (user) return <Redirect href="/(app)/(tabs)/bookings" />
 

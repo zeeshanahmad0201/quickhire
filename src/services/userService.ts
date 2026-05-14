@@ -1,52 +1,49 @@
-import { User } from '@supabase/supabase-js'
 import * as FileSystem from 'expo-file-system/legacy'
 import { decode } from 'base64-arraybuffer'
-import { gql } from 'graphql-request'
 
 import { tables } from '@/constants'
-import { database, gqlClient } from '@/lib'
+import { database, queryClient } from '@/lib'
 import { AppUser, UserRole, ProviderProfileForm, Service, ClientProfileForm } from '@/types'
 import { AuthError, translateError } from '@/errors'
 
 export const userService = {
-    currentUser: async (): Promise<User> => {
+    currentUser: (): AppUser => {
         try {
-            const {
-                error,
-                data: { session },
-            } = await database.auth.getSession()
-            if (error) throw error
-            if (!session?.user) {
-                throw new AuthError(
-                    'No user is logged in',
-                    'userService: currentUser returned null user'
-                )
+            const user = queryClient.getQueryData<AppUser>(['user', 'me'])
+            if (!user) {
+                throw new AuthError('No user is logged in', 'userService: no user in query cache')
             }
-            return session.user
+            return user
         } catch (error) {
             console.error('userService: currentUser', error)
-            throw new AuthError('No user is logged in', 'userService: currentUser returned no user')
+            throw translateError(error)
         }
     },
 
     fetchProfile: async (): Promise<AppUser> => {
         try {
-            const currentUser = await userService.currentUser()
+            const {
+                data: { session },
+                error: sessionError,
+            } = await database.auth.getSession()
+            if (sessionError) throw sessionError
+
+            if (!session?.user)
+                throw new AuthError(
+                    'No user is logged in',
+                    'userService: profile not fetched in fetchProfile'
+                )
 
             const { data, error } = await database
                 .from(tables.users)
                 .select('*')
-                .eq('id', currentUser.id)
+                .eq('id', session.user.id)
                 .single()
 
             if (error) throw error
 
-            if (!data) {
-                throw new AuthError(
-                    'No user is logged in',
-                    'userService: fetchProfile found no row'
-                )
-            }
+            if (!data)
+                throw new AuthError('No user is logged in', 'userService: fetchProfile no row')
 
             return {
                 id: data.id,
@@ -67,8 +64,10 @@ export const userService = {
         }
     },
 
-    setRole: async (role: UserRole, userId: string) => {
+    setRole: async (role: UserRole) => {
         try {
+            const userId = userService.currentUser().id
+
             const { error } = await database
                 .from(tables.users)
                 .update({
@@ -125,7 +124,7 @@ export const userService = {
             const avatarUrl = uploaded?.url ?? null
             uploadedPath = uploaded?.storagePath ?? null
 
-            const userId = (await userService.currentUser()).id
+            const userId = userService.currentUser().id
 
             const { error } = await database
                 .from(tables.users)
@@ -140,8 +139,8 @@ export const userService = {
 
             if (error) throw error
 
-            const data = await userService.fetchProfile()
-            return data
+            const user = await userService.fetchProfile()
+            return user
         } catch (error) {
             if (uploadedPath) await avatars.remove([uploadedPath])
             console.error('userService: upsertClientProfile', error)
@@ -155,7 +154,7 @@ export const userService = {
         try {
             if (!path) return null
 
-            const userId = (await userService.currentUser()).id
+            const userId = userService.currentUser().id
             const avatars = database.storage.from(tables.buckets.avatars)
 
             if (path?.startsWith('file://')) {

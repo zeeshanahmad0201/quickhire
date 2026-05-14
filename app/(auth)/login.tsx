@@ -1,13 +1,11 @@
 import { Text, StyleSheet } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { router } from 'expo-router'
 
 import { Screen, Spacer, Input, Button, Error, TextButton } from '@/components'
 import { colors, spacing, typography } from '@/constants'
-import { router } from 'expo-router'
-import { useAuth } from '@/hooks'
-import { useEffect } from 'react'
-import Toast from 'react-native-toast-message'
+import { useLogin } from '@/hooks'
 
 type LoginForm = {
     email: string
@@ -24,34 +22,19 @@ const Login = () => {
 
     const email = watch('email')
 
-    const { login, error, loading, forgotPassword } = useAuth()
-
-    useEffect(() => {
-        if (!loading && error) {
-            Toast.show({
-                type: 'error',
-                text1: error,
-                position: 'bottom',
-            })
-        }
-    }, [loading])
+    // const { mutateAsync: resetPassword, isPending: isResetting } = useForgotPass()
+    const { isPending, mutateAsync } = useLogin()
 
     const onSubmit = async (data: LoginForm) => {
-        await login(data)
+        await mutateAsync(data)
         // do NOT navigate here
-        // onAuthStateChange fires → store updates → layout redirect handles it
+        // onAuthStateChange fires → user query refetches → layout redirect handles it
     }
 
-    const onResetPassword = async () => {
-        if (!email) return
-        await forgotPassword(email)
-        Toast.show({
-            type: 'success',
-            text1: 'Success',
-            text2: `Password reset link has been sent to ${email} with instructions`,
-            position: 'bottom',
-        })
-    }
+    // const onResetPassword = async () => {
+    //     if (!email) return
+    //     await resetPassword(email)
+    // }
     return (
         <Screen main>
             <KeyboardAwareScrollView
@@ -124,8 +107,8 @@ const Login = () => {
                 <Button
                     title="Login"
                     onPress={handleSubmit(onSubmit)}
-                    disabled={loading}
-                    loading={loading}
+                    disabled={isPending}
+                    loading={isPending}
                 />
 
                 {/* Register */}

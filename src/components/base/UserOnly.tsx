@@ -1,18 +1,19 @@
-import { useUserStore } from '@/stores'
+import { useUser } from '@/hooks'
 import { router } from 'expo-router'
 import { useEffect } from 'react'
 import { ViewProps } from 'react-native'
 
 export const UserOnly = ({ children }: ViewProps) => {
-    const { user, authChecked } = useUserStore()
+    const { data: user, isPending } = useUser()
+    if (isPending) return null
 
     useEffect(() => {
-        if (authChecked && !user) {
+        if (!user) {
             router.replace('/(auth)/login')
         }
-    }, [user, authChecked])
+    }, [user])
 
-    if (!authChecked || !user) return null
+    if (!user) return null
 
     return children
 }

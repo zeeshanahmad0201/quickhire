@@ -67,7 +67,7 @@ export const ProviderForm = ({
     return (
         <>
             <FormProvider {...methods}>
-                <Screen main>
+                <Screen main loading={loading}>
                     <KeyboardAwareScrollView
                         contentContainerStyle={styles.container}
                         showsVerticalScrollIndicator={false}

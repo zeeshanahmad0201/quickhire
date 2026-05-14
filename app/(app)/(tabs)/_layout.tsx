@@ -3,11 +3,11 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Bell, Calendar, LogOut, MessageCircle, Search, User } from 'lucide-react-native'
 
 import { colors, size, spacing } from '@/constants'
-import { useAuth, useUser } from '@/hooks'
+import { useLogout, useUser } from '@/hooks'
 
 const TabsLayout = () => {
-    const { logout } = useAuth()
-    const { user } = useUser()
+    const { mutateAsync: logout } = useLogout()
+    const { data: user } = useUser()
 
     const isClient = user?.role === 'client'
 

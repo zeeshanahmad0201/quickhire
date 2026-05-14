@@ -3,7 +3,7 @@ import { ClientProfileForm } from '@/types'
 import { ClientForm } from '../forms'
 
 export const ClientProfileEditor = () => {
-    const { user } = useUser()
+    const { data: user } = useUser()
     const { mutate, isPending } = useUpdateClientProfile()
 
     const initialValues: Partial<ClientProfileForm> = {

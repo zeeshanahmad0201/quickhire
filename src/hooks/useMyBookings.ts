@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { serviceService } from '@/services'
+import { bookingService } from '@/services'
 import { useUser } from './useUser'
 
-export const useMyService = () => {
+export const useMyBookings = () => {
     const { data: user } = useUser()
 
     return useQuery({
-        queryKey: ['service', 'mine'],
-        queryFn: () => serviceService.getMyService(),
+        queryKey: ['bookings', 'list'],
+        queryFn: () => bookingService.listMyBookings(),
         enabled: !!user?.id,
     })
 }

@@ -43,7 +43,8 @@
         {
           "locationWhenInUsePermission": "QuickHire needs your location to show nearby services."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ]
   }
 }

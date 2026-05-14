@@ -12,8 +12,7 @@ import { Redirect } from 'expo-router'
 
 import { Spacer } from '@/components'
 import { colors, radius, size, spacing, typography } from '@/constants'
-import { useUserStore } from '@/stores'
-import { usePrefs } from '@/hooks'
+import { usePrefs, useUser } from '@/hooks'
 
 // icons
 import AppIcon from '../assets/icon.svg'
@@ -36,15 +35,17 @@ const Index = () => {
         return () => clearTimeout(timer)
     }, [])
 
-    const { user, authChecked } = useUserStore()
+    const { data: user, isPending } = useUser()
+    if (isPending) return null
+
     const { hasOnboarded } = usePrefs()
 
     if (minTimeElapsed) {
         if (!hasOnboarded) {
             return <Redirect href={'/(onboarding)/'} />
-        } else if (authChecked) {
-            return <Redirect href={user ? '/(app)/(tabs)/bookings' : '/(auth)/login'} />
         }
+
+        return <Redirect href={user ? '/(app)/(tabs)/bookings' : '/(auth)/login'} />
     }
 
     return (

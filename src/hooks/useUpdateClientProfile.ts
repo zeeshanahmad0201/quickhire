@@ -1,17 +1,16 @@
-import { errorMessage } from '@/errors'
-import { userService } from '@/services'
-import { useUserStore } from '@/stores'
-import { AppUser, ClientProfileForm } from '@/types'
 import { useMutation } from '@tanstack/react-query'
 import Toast from 'react-native-toast-message'
 
-export const useUpdateClientProfile = () => {
-    const setUser = useUserStore((s) => s.setUser)
+import { AuthError, errorMessage } from '@/errors'
+import { queryClient } from '@/lib'
+import { userService } from '@/services'
+import { AppUser, ClientProfileForm } from '@/types'
 
+export const useUpdateClientProfile = () => {
     return useMutation({
         mutationFn: (form: ClientProfileForm) => userService.upsertClientProfile(form),
         onSuccess: (freshUser: AppUser) => {
-            setUser(freshUser)
+            queryClient.setQueryData(['user', 'me'], freshUser)
             Toast.show({
                 type: 'success',
                 text1: 'Profile updated',

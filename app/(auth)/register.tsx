@@ -1,13 +1,11 @@
 import { StyleSheet, Text } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { router } from 'expo-router'
 
 import { Button, Error, Input, Screen, Spacer, TextButton } from '@/components'
 import { colors, spacing, typography } from '@/constants'
-import { router } from 'expo-router'
-import { useAuth } from '@/hooks'
-import { useEffect } from 'react'
-import Toast from 'react-native-toast-message'
+import { useRegister } from '@/hooks'
 import { formRules } from '@/utils'
 
 type RegisterForm = {
@@ -26,17 +24,7 @@ const Register = () => {
     } = useForm<RegisterForm>()
 
     const password = watch('password')
-    const { register, loading, error } = useAuth()
-
-    useEffect(() => {
-        if (!loading && error) {
-            Toast.show({
-                type: 'error',
-                text1: error,
-                position: 'bottom',
-            })
-        }
-    }, [loading])
+    const { mutateAsync: register, isPending: loading } = useRegister()
 
     const onSubmit = async (data: RegisterForm) => {
         await register({

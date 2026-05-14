@@ -2,7 +2,6 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 
 import { Button, Error, Input, PersonalInfoFields, Screen, Spacer } from '@/components'
 import { ClientProfileForm } from '@/types'
-import { useUpdateClientProfile, useUser } from '@/hooks'
 import { spacing } from '@/constants'
 import { formRules } from '@/utils'
 

@@ -2,7 +2,7 @@ import { ClientProfileEditor, ProviderProfileEditor } from '@/components'
 import { useUser } from '@/hooks'
 
 const Profile = () => {
-    const { user } = useUser()
+    const { data: user } = useUser()
 
     if (user?.role === 'provider') {
         return <ProviderProfileEditor />

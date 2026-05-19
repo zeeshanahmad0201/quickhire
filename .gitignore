@@ -42,3 +42,5 @@ yarn-error.*
 /android
 
 Claude.md
+
+google-services.json

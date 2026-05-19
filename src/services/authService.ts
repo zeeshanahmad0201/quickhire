@@ -64,5 +64,5 @@ export const authService = {
             console.error('authService: forgotPassword', error)
             throw translateError(error)
         }
-    },
+    }
 }

@@ -3,11 +3,19 @@ import { useMutation } from '@tanstack/react-query'
 
 import { errorMessage } from '@/errors'
 import { queryClient } from '@/lib'
-import { authService } from '@/services'
+import { authService, notificationService } from '@/services'
 
 export const useLogout = () => {
     return useMutation({
-        mutationFn: () => authService.logout(),
+        mutationFn: async () => {
+            try {
+                await notificationService.deleteCurrentDeviceToken()
+            } catch (error) {
+                console.warn('useLogout: token cleanup failed, continuing logout', error)
+            }
+
+            await authService.logout()
+        },
         onSuccess: () => {
             queryClient.setQueryData(['user', 'me'], null)
             queryClient.clear()

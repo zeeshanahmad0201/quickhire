@@ -44,8 +44,9 @@ export const locationService = {
         }
     },
 
-    reverseGeocode: async (location: Coordinates): Promise<string> => {
+    reverseGeocode: async (location: Coordinates): Promise<string | null> => {
         try {
+            if (!(await locationService.hasPermission())) return null
             const result = await Location.reverseGeocodeAsync({
                 latitude: location.lat,
                 longitude: location.lng,

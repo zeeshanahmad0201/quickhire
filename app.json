@@ -23,6 +23,7 @@
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png"
@@ -30,7 +31,9 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.xeeshanahmad.quickhire",
       "permissions": [
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -44,7 +47,20 @@
           "locationWhenInUsePermission": "QuickHire needs your location to show nearby services."
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "color": "#4F46E5"
+        }
+      ],
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b423cb07-55b1-4438-bb04-a98cdfa0245f"
+      }
+    },
+    "owner": "xeeshan_ahmad"
   }
 }

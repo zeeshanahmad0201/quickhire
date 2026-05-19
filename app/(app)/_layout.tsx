@@ -1,7 +1,8 @@
-import { UserOnly } from '@/components'
-import { useUser } from '@/hooks'
 import { router, Stack } from 'expo-router'
 import { useEffect } from 'react'
+
+import { UserOnly } from '@/components'
+import { useNotificationHandlers, usePushTokenRegistration, useUser } from '@/hooks'
 
 const AppLayout = () => {
     const { data: user, isPending } = useUser()
@@ -15,6 +16,9 @@ const AppLayout = () => {
             return router.replace('/role-select')
         }
     }, [user])
+
+    usePushTokenRegistration()
+    useNotificationHandlers()
 
     if (isPending) return null
 

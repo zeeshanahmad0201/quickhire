@@ -6,6 +6,7 @@ export const tables = {
     conversations: 'conversations',
     messages: 'messages',
     notifications: 'notifications',
+    deviceTokens: 'device_tokens',
 
     buckets: {
         avatars: 'avatars',

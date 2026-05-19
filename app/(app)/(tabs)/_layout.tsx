@@ -6,7 +6,7 @@ import { colors, size, spacing } from '@/constants'
 import { useLogout, useUser } from '@/hooks'
 
 const TabsLayout = () => {
-    const { mutateAsync: logout } = useLogout()
+    const { mutateAsync: logout, isPending: isLoggingOut } = useLogout()
     const { data: user } = useUser()
 
     const isClient = user?.role === 'client'
@@ -25,7 +25,7 @@ const TabsLayout = () => {
                             <Bell size={size.iconMd} color={colors.light.icon.normal} />
                         </TouchableOpacity>
                         {/* Logout */}
-                        <TouchableOpacity onPress={() => logout()}>
+                        <TouchableOpacity onPress={() => logout()} disabled={isLoggingOut}>
                             <LogOut style={styles.iconButton} color={colors.light.icon.normal} />
                         </TouchableOpacity>
                     </View>

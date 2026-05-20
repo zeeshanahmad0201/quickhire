@@ -4,8 +4,6 @@
 
 **Status:** Portfolio piece, not a live product. Ships against a defined set of goals, then stops.
 
-<!-- TODO: 3 screenshots side-by-side (feed, booking detail, profile) or one GIF -->
-
 ![React Native](https://img.shields.io/badge/React_Native-0.83-61DAFB?logo=react&logoColor=white)
 ![Expo](https://img.shields.io/badge/Expo-SDK_55-000020?logo=expo&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-pg__graphql-3FCF8E?logo=supabase&logoColor=white)
@@ -18,7 +16,12 @@ I've shipped Flutter for six years. This repo is what happened when I applied th
 
 ## Demo
 
-<!-- TODO: Loom embed or thumbnail link (2–3 min walkthrough) -->
+Two Shorts, one booking flow — the client creates the booking on the left, the provider receives the push on the right.
+
+| Client side — booking flow | Provider side — push arrives |
+| :---: | :---: |
+| [![Client demo](https://img.youtube.com/vi/72kndOk01VU/hqdefault.jpg)](https://youtube.com/shorts/72kndOk01VU) | [![Provider demo](https://img.youtube.com/vi/1iYPvIbJRmQ/hqdefault.jpg)](https://youtube.com/shorts/1iYPvIbJRmQ) |
+| [YouTube Short ↗](https://youtube.com/shorts/72kndOk01VU) | [YouTube Short ↗](https://youtube.com/shorts/1iYPvIbJRmQ) |
 
 ## Architecture: the five pillars
 

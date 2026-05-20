@@ -23,14 +23,14 @@ export const usePushTokenRegistration = () => {
             const token = await notificationService.getPushToken()
             if (!token) return
 
-            await notificationService.saveToken(user.id, token, platform)
+            await notificationService.saveToken(token, platform)
         }
 
         register()
 
         // Listen for token rotation (OS reissues for various reasons)
         const sub = Notifications.addPushTokenListener(({ data: rotatedToken }) => {
-            notificationService.saveToken(user.id, rotatedToken, platform)
+            notificationService.saveToken(rotatedToken, platform)
         })
 
         return () => sub.remove()

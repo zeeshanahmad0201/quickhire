@@ -54,16 +54,12 @@ export const notificationService = {
         }
     },
 
-    saveToken: async (userId: string, token: string, platform: DevicePlatform): Promise<void> => {
+    saveToken: async (token: string, platform: DevicePlatform): Promise<void> => {
         try {
-            const { error } = await database.from(tables.deviceTokens).upsert(
-                {
-                    user_id: userId,
-                    token,
-                    platform,
-                },
-                { onConflict: 'token' }
-            )
+            const { error } = await database.rpc('register_device_token', {
+                p_token: token,
+                p_platform: platform,
+            })
 
             if (error) throw error
         } catch (error) {

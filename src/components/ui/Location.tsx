@@ -73,6 +73,8 @@ export const Location = ({ onClose, initialLocation }: LocationProps) => {
                     setLocation({ lat: region.latitude, lng: region.longitude })
                     setChanging(true)
                 }}
+                zoomControlEnabled={false}
+                showsMyLocationButton={false}
                 showsUserLocation
             />
             <SafeAreaView style={styles.closeBtnContainer}>
